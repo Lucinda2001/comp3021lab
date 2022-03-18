@@ -5,9 +5,10 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
-public class Folder extends NoteBook implements Comparable<Folder>{
+public class Folder extends NoteBook implements Comparable<Folder>, java.io.Serializable{
 	private ArrayList<Note> notes;
 	private String name;
+	private static final long serialVersionUID = 1L;
 
 	public Folder(String name){
 		this.name = name;
@@ -58,37 +59,58 @@ public class Folder extends NoteBook implements Comparable<Folder>{
 	public List<Note> searchNotes(String keywords){
 		List<Note> backNotes = new LinkedList<>();
 		String[] keys = keywords.split(" ");
-		for(int i = 0; i<keys.length; i++){
-			if(keys[i].equalsIgnoreCase("or")){
-				for(Note n:this.notes){
-					if(n instanceof ImageNote){
-
+		for(Note n:this.notes){
+			if(n instanceof ImageNote){
+				for(int i=1; i<keys.length-1;i++){
+					if(keys[i].equalsIgnoreCase("or")){
 						if(n.getTitle().toLowerCase().contains(keys[i-1].toLowerCase()) || n.getTitle().toLowerCase().contains(keys[i+1].toLowerCase())){
-							if(backNotes == null)
-								backNotes.add(n);
-							else
-							{
-								for(Note j: backNotes){
-									if(j.equals(n));
-									else{
-										
-									}
-									
-								}
-							}
+
+						}
+						else{
+							break;
 						}
 					}
-					else{
-							TextNote tn = (TextNote)n;
-							if(n.getTitle().toLowerCase().contains(keys[i-1].toLowerCase()) || n.getTitle().toLowerCase().contains(keys[i+1].toLowerCase()) || tn.getContent().toLowerCase().contains(keys[i-1].toLowerCase()) || tn.getContent().toLowerCase().contains(keys[i+1].toLowerCase())){
-								backNotes.add(n);
-							}
+					else if((!keys[i-1].equalsIgnoreCase("or")) && (!keys[i+1].equalsIgnoreCase("or")) ){
+						if(n.getTitle().toLowerCase().contains(keys[i])){
 
+						}
+						else{
+							break;
+						}
+					}
+					if(i == keys.length-2){
+						backNotes.add(n);
+					}
+				}
 
+			}
+			else if(n instanceof TextNote){
+				TextNote tn = (TextNote)n;
+				for(int i=1; i<keys.length-1;i++){
+					if(keys[i].equalsIgnoreCase("or")){
+
+						if(n.getTitle().toLowerCase().contains(keys[i-1].toLowerCase()) || n.getTitle().toLowerCase().contains(keys[i+1].toLowerCase()) || tn.getContent().toLowerCase().contains(keys[i-1].toLowerCase()) || tn.getContent().toLowerCase().contains(keys[i+1].toLowerCase())){
+
+						}
+						else{
+							break;
+						}
+					}
+					else if((!keys[i-1].equalsIgnoreCase("or")) && (!keys[i+1].equalsIgnoreCase("or")) ){
+						if(n.getTitle().toLowerCase().contains(keys[i]) || tn.getContent().contains(keys[i].toLowerCase())){
+
+						}
+						else{
+							break;
+						}
+					}
+					if(i == keys.length-2){
+						backNotes.add(n);
 					}
 				}
 			}
 		}
+
 		return backNotes;
 	}
 }
