@@ -61,6 +61,11 @@ public class Folder extends NoteBook implements Comparable<Folder>, java.io.Seri
 		String[] keys = keywords.split(" ");
 		for(Note n:this.notes){
 			if(n instanceof ImageNote){
+				if(keys.length <= 1){
+					if(n.getTitle().toLowerCase().contains(keys[0].toLowerCase()))
+						backNotes.add(n);
+						break;
+				}
 				for(int i=1; i<keys.length-1;i++){
 					if(keys[i].equalsIgnoreCase("or")){
 						if(n.getTitle().toLowerCase().contains(keys[i-1].toLowerCase()) || n.getTitle().toLowerCase().contains(keys[i+1].toLowerCase())){
@@ -86,6 +91,12 @@ public class Folder extends NoteBook implements Comparable<Folder>, java.io.Seri
 			}
 			else if(n instanceof TextNote){
 				TextNote tn = (TextNote)n;
+				if(keys.length <= 1){
+					if(n.getTitle().toLowerCase().contains(keys[0].toLowerCase()) || tn.getContent().toLowerCase().contains(keys[0].toLowerCase())){
+						backNotes.add(n);
+
+					}
+				}
 				for(int i=1; i<keys.length-1;i++){
 					if(keys[i].equalsIgnoreCase("or")){
 
